@@ -12,6 +12,55 @@ const NewPrompt = () => {
     const fileInputRef = useRef(null);
     const textareaRef = useRef(null);
 
+    // const mutationTest = useMutation({
+    //     mutationFn: () => {
+    //         return fetch(`https://e30c-154-81-254-185.ngrok-free.app/api/chats/`, {
+    //             method: "POST",
+    //             credentials: "include",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify({
+    //                 model:"llama3",
+    //                 stream: true,
+    //                 messages: [
+    //                     {
+    //                         "role": "user",
+    //                         "content": "why is the sky blue?"
+    //                     },
+    //                     {
+    //                         "role": "assistant",
+    //                         "content": "due to rayleigh scattering."
+    //                     },
+    //                     {
+    //                         "role": "user",
+    //                         "content": "how is that different than mie scattering?"
+    //                     }
+    //                 ]
+    //             }),
+    //         }).then((res) => res.json());
+    //     },
+    //     onSuccess: () => {
+    //         // queryClient
+    //         //     .invalidateQueries({ queryKey: ["chat", data._id] })
+    //         //     .then(() => {
+    //         //         formRef.current.reset();
+    //         //         setQuestion("");
+    //         //         setAnswer("");
+    //         //         setImg({
+    //         //             isLoading: false,
+    //         //             error: "",
+    //         //             dbData: {},
+    //         //             aiData: {},
+    //         //         });
+    //         //     });
+    //     },
+    //     onError: (err) => {
+    //         console.log(err);
+    //     },
+    // });
+
+
     const mutation = useMutation({
         mutationFn: async () => {
             const formData = new FormData();
@@ -47,7 +96,8 @@ const NewPrompt = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        // console.log("dadad",import.meta.env.OLLAMA_API)
+        // mutationTest.mutate();
         if (!inputValue.trim()) return;
 
         addMessage(inputValue);

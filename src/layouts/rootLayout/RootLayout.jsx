@@ -15,17 +15,17 @@ const RootLayout = () => {
         <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
             <QueryClientProvider client={queryClient}>
                 <div className="rootLayout">
-                    <header>
-                        <Link to="/" className="logo">
-                            <img src="/logo.png" alt="" />
-                            <span>Vision Query</span>
-                        </Link>
-                        <div className="user">
-                            <SignedIn>
-                                <UserButton />
-                            </SignedIn>
-                        </div>
-                    </header>
+                    {/*<header>*/}
+                    {/*    <Link to="/" className="logo">*/}
+                    {/*        <img src="/logo.png" alt="" />*/}
+                    {/*        <span>Vision Query</span>*/}
+                    {/*    </Link>*/}
+                    {/*    <div className="user">*/}
+                    {/*        <SignedIn>*/}
+                    {/*            <UserButton />*/}
+                    {/*        </SignedIn>*/}
+                    {/*    </div>*/}
+                    {/*</header>*/}
                     <main>
                         <Outlet />
                     </main>

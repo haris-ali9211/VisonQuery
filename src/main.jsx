@@ -10,6 +10,7 @@ import SignUpPage from "./routes/signUpPage/SignUpPage.jsx";
 import DashboardLayout from "./layouts/dashboardLayout/DashboardLayout.jsx";
 import DashboardPage from "./routes/dashboardPage/DashboardPage.jsx";
 import ChatPage from "./routes/chatPage/ChatPage.jsx";
+import FileAnalyze from "./routes/fileAnalyze/fileAnalyze.jsx";
 
 
 const router = createBrowserRouter([
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <Homepage />,
+            },
+            {
+                path: "/file-Analyzer",
+                element: <FileAnalyze />,
             },
             {
                 path: "/sign-in/*",

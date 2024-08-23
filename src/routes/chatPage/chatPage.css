@@ -1,4 +1,5 @@
 .chatPage{
+    background-color: #e55571;
     height: 100%;
     display: flex;
     flex-direction: column;
