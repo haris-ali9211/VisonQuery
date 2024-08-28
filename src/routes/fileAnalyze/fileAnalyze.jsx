@@ -2,9 +2,9 @@ import "./fileAnalyze.css";
 import { useRef, useState } from "react";
 import Markdown from 'marked-react';
 import { useMutation } from "@tanstack/react-query";
-import DocViewer from "react-doc-viewer";
 import mammoth from "mammoth";
-import html2pdf from 'html2pdf.js';  // Assuming you use html2pdf.js for conversion to PDF
+import html2pdf from 'html2pdf.js';
+import toast from 'react-hot-toast';
 
 const FileAnalyze = () => {
     const [showUpload, setShowUpload] = useState(true);
@@ -13,6 +13,18 @@ const FileAnalyze = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [answer, setAnswer] = useState(""); // Placeholder for Markdown rendering
     const fileInputRef = useRef(null);
+
+    const showError = (message) => {
+        toast.error(message);
+    };
+
+    const resetState = () => {
+        setShowUpload(true);
+        setisLoading(false);
+        setPreview(null);
+        setSelectedFile(null);
+        setAnswer("");
+    };
 
     const mutation = useMutation({
         mutationFn: async () => {
@@ -40,7 +52,8 @@ const FileAnalyze = () => {
         },
         onError: (err) => {
             console.log(err);
-            setisLoading(false);
+            showError("An error occurred while analyzing the file.");
+            resetState(); // Reset state if there's an error
         },
     });
 
@@ -72,7 +85,8 @@ const FileAnalyze = () => {
                         pdfReader.readAsDataURL(pdfBlob);
                     } catch (error) {
                         console.error("Error converting DOCX to PDF", error);
-                        setisLoading(false);
+                        showError("Error converting DOCX to PDF.");
+                        resetState(); // Reset state if there's an error
                     }
                 } else {
                     setPreview(base64String);
@@ -86,8 +100,8 @@ const FileAnalyze = () => {
             } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
                 reader.readAsArrayBuffer(file); // Read as ArrayBuffer for mammoth processing
             } else if (file.type === 'application/msword') {
-                alert("DOC format is not supported for conversion.");
-                setisLoading(false);
+                showError("DOC format is not supported for conversion.");
+                resetState(); // Reset state if the file format is not supported
             }
 
             setShowUpload(false);

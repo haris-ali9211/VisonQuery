@@ -1,5 +1,6 @@
 import React, { StrictMode }from 'react'
 import { createRoot } from 'react-dom/client'
+import toast, { Toaster } from 'react-hot-toast';
 import './index.css'
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -53,5 +54,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
       <RouterProvider router={router} />
+      <Toaster
+          position="bottom-right"
+          reverseOrder={false}
+      />
   </StrictMode>,
 )
