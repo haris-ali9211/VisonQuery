@@ -69,7 +69,7 @@ const NewPrompt = () => {
                 formData.append("file", selectedFile);
             }
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/analyze-image/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/analyze-file/`, {
                 method: "POST", body: formData,
             });
 

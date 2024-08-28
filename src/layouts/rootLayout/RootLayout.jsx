@@ -1,3 +1,4 @@
+import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import "./rootLayout.css";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/clerk-react";

@@ -1,7 +1,10 @@
 import "./fileAnalyze.css";
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 import Markdown from 'marked-react';
-import {useMutation} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import DocViewer from "react-doc-viewer";
+import mammoth from "mammoth";
+import html2pdf from 'html2pdf.js';  // Assuming you use html2pdf.js for conversion to PDF
 
 const FileAnalyze = () => {
     const [showUpload, setShowUpload] = useState(true);
@@ -19,20 +22,23 @@ const FileAnalyze = () => {
                 formData.append("file", selectedFile);
             }
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/analyze-image/`, {
-                method: "POST", body: formData,
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/analyze-file/`, {
+                method: "POST",
+                body: formData,
             });
 
             if (!response.ok) {
-                throw new Error("Failed to analyze image");
+                throw new Error("Failed to analyze file");
             }
 
             return response.json();
-        }, onSuccess: (responseAnswer) => {
+        },
+        onSuccess: (responseAnswer) => {
             console.log(responseAnswer);
             setAnswer(responseAnswer.answer);
             setisLoading(false);
-        }, onError: (err) => {
+        },
+        onError: (err) => {
             console.log(err);
             setisLoading(false);
         },
@@ -42,19 +48,49 @@ const FileAnalyze = () => {
         const file = e.target.files[0];
         if (file) {
             setSelectedFile(file);
-            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const reader = new FileReader();
 
-            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                // Handle image preview
-                setPreview(URL.createObjectURL(file));
-                setisLoading(true);
-                mutation.mutate();
-            } else {
-                // Handle non-image file preview or processing
-                // Here you can add logic to process other file types like PDF, DOC, etc.
+            reader.onloadend = async () => {
+                let base64String = reader.result;
+
+                if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                    try {
+                        // Convert DOCX to HTML
+                        const { value: html } = await mammoth.convertToHtml({ arrayBuffer: reader.result });
+
+                        // Convert HTML to PDF using html2pdf.js
+                        const pdfBlob = await html2pdf().from(html).outputPdf('blob');
+
+                        // Create a base64 string from the PDF Blob
+                        const pdfReader = new FileReader();
+                        pdfReader.onloadend = () => {
+                            base64String = pdfReader.result;
+                            setPreview(base64String);
+                            setisLoading(true);
+                            mutation.mutate();
+                        };
+                        pdfReader.readAsDataURL(pdfBlob);
+                    } catch (error) {
+                        console.error("Error converting DOCX to PDF", error);
+                        setisLoading(false);
+                    }
+                } else {
+                    setPreview(base64String);
+                    setisLoading(true);
+                    mutation.mutate();
+                }
+            };
+
+            if (file.type.startsWith('image') || file.type === 'application/pdf') {
+                reader.readAsDataURL(file); // Correctly read as DataURL for images and PDFs
+            } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                reader.readAsArrayBuffer(file); // Read as ArrayBuffer for mammoth processing
+            } else if (file.type === 'application/msword') {
+                alert("DOC format is not supported for conversion.");
+                setisLoading(false);
             }
 
-            setShowUpload(false); // Hide the upload card once a file is selected
+            setShowUpload(false);
         }
     };
 
@@ -88,14 +124,33 @@ const FileAnalyze = () => {
 
                     {!showUpload &&
                         <div className="report">
+
                             {preview && (
-                                <div className="imageUpload">
-                                    {preview && <img
-                                        src={preview}
-                                        alt="uploadImage"
-                                        width="380"
-                                        height="380"
-                                    />}
+                                <div>
+                                    {selectedFile.type.startsWith('image') && (
+                                        <img
+                                            src={preview}
+                                            alt="uploadImage"
+                                        />
+                                    )}
+                                    {selectedFile.type === 'application/pdf' && (
+                                        <iframe
+                                            className="pdf-viewer"
+                                            width="70%"
+                                            height="460px"
+                                            src={`data:application/pdf;base64,${preview.split(',')[1]}`}
+                                        >
+                                        </iframe>
+                                    )}
+                                    {(selectedFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || selectedFile.type === 'application/msword') && preview && (
+                                        <iframe
+                                            className="pdf-viewer"
+                                            width="70%"
+                                            height="460px"
+                                            src={`data:application/pdf;base64,${preview.split(',')[1]}`}
+                                        >
+                                        </iframe>
+                                    )}
                                 </div>
                             )}
 
@@ -103,14 +158,9 @@ const FileAnalyze = () => {
                                 <Markdown>{answer}</Markdown>
                             </div>}
 
-                            {setisLoading && <div
-                                // style={{backgroundColor: "#2c2937", borderRadius: "20px", maxWidth: "40%"}}
-                            >
+                            {isLoading && (
                                 <div className="loader"/>
-                            </div>}
-
-
-
+                            )}
                         </div>
                     }
                 </div>

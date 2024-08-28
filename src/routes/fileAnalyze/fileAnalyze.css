@@ -80,12 +80,14 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
+                margin-top: 50px;
 
                 .loader {
                     width: 10px;
                     height: 10px;
                     border-radius: 50%;
                     position: relative;
+                    margin-top: 50px;
                     animation: shadowRolling 3s linear infinite;
                 }
 
@@ -135,13 +137,21 @@
                     }
                 }
 
-                .imageUpload {
-                    img {
-                        border-radius: 12px;
-                        align-self: flex-end;
-                    }
-                    margin: 40px;
+                img {
+                    border-radius: 12px;
+                    align-self: flex-end;
+                    width: 380px;
+                    height: 380px;
                 }
+
+                iframe{
+                    border-radius: 12px;
+                    align-self: flex-end;
+                    width: 480px;
+                    height: 480px;
+
+                }
+
 
                 .isReport {
                     padding: 20px;
@@ -150,6 +160,7 @@
                     text-align: start;
                     width: 50%;
                     margin-bottom: 30px;
+                    margin-top: 30px;
 
                     p, li {
                         margin: 10px 0px;
