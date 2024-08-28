@@ -101,7 +101,9 @@ const FileAnalyze = () => {
                 reader.readAsArrayBuffer(file); // Read as ArrayBuffer for mammoth processing
             } else if (file.type === 'application/msword') {
                 showError("DOC format is not supported for conversion.");
+                setShowUpload(true)
                 resetState(); // Reset state if the file format is not supported
+                return;
             }
 
             setShowUpload(false);
